@@ -1,48 +1,59 @@
 package com.agencia.automovilesWeb;
 
-import org.testng.annotations.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
 public class AutomovilTest {
+
+    @Mock
+    private AutomovilRepository automovilRepository; // Simularemos el repositorio
+
+    @InjectMocks
+    private AutomovilService automovilService; // Simularemos el servicio
 
     @Test
     public void testAcelerar() {
         Automovil auto = new Automovil("Toyota", "Corolla", "Rojo");
-        auto.acelerar(100);
-        // Assertions para verificar el comportamiento de acelerar
+        when(automovilRepository.save(any(Automovil.class))).thenReturn(auto);
+        automovilService.acelerar(auto, 100);
+        assertEquals(100, auto.getVelocidad());
     }
 
     @Test
     public void testFrenar() {
         Automovil auto = new Automovil("Toyota", "Corolla", "Rojo");
         auto.acelerar(100);
-        assertEquals(100, auto.getVelocidad());  // This is correct
-        auto.frenar();
-        // Here, the speed should be 50 after braking, not 0
-        assertEquals(0, auto.getVelocidad()); // This might be failing
-    }
-
-    @Test
-    public void testFrenarDetenido(){
-        Automovil auto = new Automovil("Toyota", "Corolla", "Rojo");
-        auto.frenar();
+        when(automovilRepository.save(any(Automovil.class))).thenReturn(auto);
+        automovilService.frenar(auto);
         assertEquals(0, auto.getVelocidad());
     }
 
+    @Test
+    public void testFrenarDetenido() {
+        Automovil auto = new Automovil("Toyota", "Corolla", "Rojo");
+        when(automovilRepository.save(any(Automovil.class))).thenReturn(auto);
+        automovilService.frenar(auto);
+        assertEquals(0, auto.getVelocidad());
+    }
 
     @Test
     public void testGirarIzquierda() {
         Automovil auto = new Automovil("Toyota", "Corolla", "Rojo");
-        auto.girarIzquierda();
+        automovilService.girarIzquierda(auto);
         // Assertions para verificar el comportamiento de girarIzquierda
     }
 
     @Test
     public void testGirarDerecha() {
         Automovil auto = new Automovil("Toyota", "Corolla", "Rojo");
-        auto.girarDerecha();
+        automovilService.girarDerecha(auto);
         // Assertions para verificar el comportamiento de girarDerecha
     }
 }
-
-
